@@ -19,13 +19,13 @@ const db = new Client({
 })
 
 // create table discord (
-// 	time 		numeric,
-// 	author_id	numeric,
+// 	msg_time    numeric,
+// 	author_id	  numeric,
 // 	author_name text,
-// 	msg			text,
-// 	channel 	text,
+// 	msg			    text,
+// 	channel 	  text,
 // 	channel_id 	numeric,
-// 	roles 		text[],
+// 	roles 		  text[],
 // 	server_name	text
 // )
 
@@ -63,7 +63,7 @@ bot.on("messageCreate", (msg) => {
     }
     if (db_conn){
       db.query(
-        'INSERT INTO discord (time, id, name, msg, channel, channel_id, roles, server_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
+        'INSERT INTO discord (msg_time, author_id, author_name, msg, channel, channel_id, roles, server_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
         [
           Number(msg.createdTimestamp), 
           Number(msg.author.id), 

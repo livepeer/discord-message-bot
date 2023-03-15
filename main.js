@@ -1,6 +1,8 @@
 const { Client, Events } = require('pg')
 const Discord = require("discord.js");
 require('dotenv').config();
+const express = require('express');
+const app = express();
 
 const bot = new Discord.Client({
 	intents: [
@@ -62,6 +64,17 @@ bot.on("messageCreate", (msg) => {
       roles.push(role[1].name);
     }
     if (db_conn){
+      console.log('INSERT INTO discord (msg_time, author_id, author_name, msg, channel, channel_id, roles, server_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
+      [
+        Number(msg.createdTimestamp), 
+        Number(msg.author.id), 
+        msg.author.username, 
+        msg.content,
+        msg.channel.name, 
+        Number(msg.channelId),
+        roles,
+        msg.guild.name
+      ])
       db.query(
         'INSERT INTO discord (msg_time, author_id, author_name, msg, channel, channel_id, roles, server_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
         [
@@ -81,3 +94,7 @@ bot.on("messageCreate", (msg) => {
 
 bot.login(process.env.BOT_TOKEN).catch(console.error);
 
+const port = parseInt(process.env.PORT) || 8080;
+app.listen(port, () => {
+  console.log(`helloworld: listening on port ${port}`);
+});

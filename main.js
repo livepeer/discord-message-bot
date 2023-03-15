@@ -48,6 +48,7 @@ app.listen(port, () => {
   console.log(`helloworld: listening on port ${port}`);
   bot.on("ready", () => {
     console.log("Connected to Discord");
+    console.log(bot.guilds.cache.map((guild) => guild.name).join('\n'))
   });
   
   bot.on("error", (e) => {
@@ -68,8 +69,7 @@ app.listen(port, () => {
         roles.push(role[1].name);
       }
       if (db_conn){
-        console.log('INSERT INTO discord (msg_time, author_id, author_name, msg, channel, channel_id, roles, server_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
-        [
+        console.log('writing to db', [
           Number(msg.createdTimestamp), 
           Number(msg.author.id), 
           msg.author.username, 
@@ -78,7 +78,7 @@ app.listen(port, () => {
           Number(msg.channelId),
           roles,
           msg.guild.name
-        ])
+        ].join(", "))
         db.query(
           'INSERT INTO discord (msg_time, author_id, author_name, msg, channel, channel_id, roles, server_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
           [
@@ -93,7 +93,7 @@ app.listen(port, () => {
           ]
           ).then((result) => {}).catch((e) => console.error(e.stack));
       }
-    });  
+    }).then((result) => {}).catch((e) => console.error(e.stack));  
   });
   
   bot.login(process.env.BOT_TOKEN).catch(console.error);

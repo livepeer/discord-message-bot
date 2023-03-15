@@ -42,41 +42,33 @@ db.connect((err) => {
   }
 })
 
-bot.on("ready", () => {
-  console.log("Connected to Discord");
-});
 
-bot.on("error", (e) => {
-  console.error("Discord error: "+e.toString());
-});
-
-bot.on("messageCreate", (msg) => {
-  //Docs: https://discord.js.org/#/docs/discord.js/main/class/Message
-  // You probably want msg.author.username (string) and msg.author.id (a "snowflake", basically a massive number, but best to treat like a string since most databases can't handle numbers this massive well) for "who sent it"
-  // (the ID is constant, the username can change at any time!)
-  // msg.content has the message contents (e.g. text) as a string
-  // msg.createdTimestamp has the message creation time (integer)
-
-  // Make sure DB is connected before we start inserting
-  msg.guild.members.fetch(msg.author).then((m) => {
-    let roles = [];
-    for (const role of m.roles.cache){
-      roles.push(role[1].name);
-    }
-    if (db_conn){
-      console.log('INSERT INTO discord (msg_time, author_id, author_name, msg, channel, channel_id, roles, server_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
-      [
-        Number(msg.createdTimestamp), 
-        Number(msg.author.id), 
-        msg.author.username, 
-        msg.content,
-        msg.channel.name, 
-        Number(msg.channelId),
-        roles,
-        msg.guild.name
-      ])
-      db.query(
-        'INSERT INTO discord (msg_time, author_id, author_name, msg, channel, channel_id, roles, server_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
+const port = parseInt(process.env.PORT) || 8080;
+app.listen(port, () => {
+  console.log(`helloworld: listening on port ${port}`);
+  bot.on("ready", () => {
+    console.log("Connected to Discord");
+  });
+  
+  bot.on("error", (e) => {
+    console.error("Discord error: "+e.toString());
+  });
+  
+  bot.on("messageCreate", (msg) => {
+    //Docs: https://discord.js.org/#/docs/discord.js/main/class/Message
+    // You probably want msg.author.username (string) and msg.author.id (a "snowflake", basically a massive number, but best to treat like a string since most databases can't handle numbers this massive well) for "who sent it"
+    // (the ID is constant, the username can change at any time!)
+    // msg.content has the message contents (e.g. text) as a string
+    // msg.createdTimestamp has the message creation time (integer)
+  
+    // Make sure DB is connected before we start inserting
+    msg.guild.members.fetch(msg.author).then((m) => {
+      let roles = [];
+      for (const role of m.roles.cache){
+        roles.push(role[1].name);
+      }
+      if (db_conn){
+        console.log('INSERT INTO discord (msg_time, author_id, author_name, msg, channel, channel_id, roles, server_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
         [
           Number(msg.createdTimestamp), 
           Number(msg.author.id), 
@@ -86,15 +78,23 @@ bot.on("messageCreate", (msg) => {
           Number(msg.channelId),
           roles,
           msg.guild.name
-        ]
-        ).then((result) => {}).catch((e) => console.error(e.stack));
-    }
-  });  
-});
-
-bot.login(process.env.BOT_TOKEN).catch(console.error);
-
-const port = parseInt(process.env.PORT) || 8080;
-app.listen(port, () => {
-  console.log(`helloworld: listening on port ${port}`);
+        ])
+        db.query(
+          'INSERT INTO discord (msg_time, author_id, author_name, msg, channel, channel_id, roles, server_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
+          [
+            Number(msg.createdTimestamp), 
+            Number(msg.author.id), 
+            msg.author.username, 
+            msg.content,
+            msg.channel.name, 
+            Number(msg.channelId),
+            roles,
+            msg.guild.name
+          ]
+          ).then((result) => {}).catch((e) => console.error(e.stack));
+      }
+    });  
+  });
+  
+  bot.login(process.env.BOT_TOKEN).catch(console.error);
 });

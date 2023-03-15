@@ -1,4 +1,17 @@
 {
+    "name": "discord-message-bot",
+    "description": "simple discord bot capture messages on a discord server",
+    "version": "1.0.0",
+    "private": true,
+    "main": "index.js",
+    "scripts": {
+        "start": "node main.js"
+    },
+    "engines": {
+        "node": ">=12.0.0"
+    },
+    "author": "ecmulli",
+    "license": "Apache-2.0",
     "dependencies": {
         "discord.js": "^14.7.1",
         "dotenv": "^16.0.3",

@@ -60,8 +60,9 @@ app.listen(port, () => {
     // (the ID is constant, the username can change at any time!)
     // msg.content has the message contents (e.g. text) as a string
     // msg.createdTimestamp has the message creation time (integer)
-
+    
     // Make sure DB is connected before we start inserting
+    console.log("messageCreate", msg.author.username, msg.content, msg.channel.name, msg.channelId, msg.guild.name);
     msg.guild.members
       .fetch(msg.author)
       .then((m) => {
